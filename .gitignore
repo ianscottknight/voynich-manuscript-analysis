@@ -18,3 +18,4 @@ __pycache__
 voynich_manuscript_analysis/data/*/**
 !.gitkeep
 !__init__.py
+!voynich_transcription_eva.txt
