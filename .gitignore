@@ -1,0 +1,20 @@
+# OSX Junk
+.DS_Store
+
+# test cache
+.cache/*
+tests/__pycache__/*
+*.pytest_cache/
+
+# Python
+__pycache__
+.ipynb_checkpoints
+.python-version
+
+# environment variables
+.env
+
+# data directory due to potentially large files
+voynich_manuscript_analysis/data/*/**
+!.gitkeep
+!__init__.py
