@@ -3,7 +3,6 @@
 An analysis of the Voynich manuscript using modern data analysis methods.
 
 ## Project Organization
-------------
 
     │
     ├── README.md           
@@ -27,5 +26,3 @@ An analysis of the Voynich manuscript using modern data analysis methods.
             ├── processed   <- The final, canonical data sets for modeling.
             └── raw         <- The original, immutable data dump.
      
-
---------
