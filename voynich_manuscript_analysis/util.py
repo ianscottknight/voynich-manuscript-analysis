@@ -1,6 +1,7 @@
 import os
 import dotenv
 from pathlib import Path
+import re
 
 
 dotenv.load_dotenv()
