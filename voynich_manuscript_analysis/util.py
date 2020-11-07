@@ -2,6 +2,7 @@ import os
 import dotenv
 from pathlib import Path
 import re
+import collections
 
 
 dotenv.load_dotenv()
@@ -34,37 +35,47 @@ def load_txt_file_as_list(filepath):
     return lst
 
 
-def get_paragraphs():
+def get_paragraphs_dict():
 
     lines = load_txt_file_as_list(VOYNICH_TEXT_PATH)
-    paragraphs = []
-    current_paragraph = []
+    paragraphs_dict = collections.defaultdict(list)
 
     for line in lines:
         add = False
         s = "".join(line.split())
 
-        if s[0] == "#":
+        annotations = re.search("<(.*)>", s).groups()
+        annotation = annotations[0]
+
+        pattern = (
+            r"(f([0-9]+)([A-Za-z]+[0-9]*)?\.P([0-9]*[A-Za-z]*)\.([0-9]+[A-Za-z]*);H)"
+        )
+
+        match = re.match(pattern, annotation)
+        if match == None:
             continue
 
-        annotations = re.search("<(.*)>", s).groups()
+        assert len(match.groups()) == 5
 
-        if ("." not in annotations[0]) or ("$" in annotations[1:]):
-            add = True
+        annotation, folio, folio_qualifier, page_qualifier, line_number = match.groups()
+
+        paragraph_id = f"f{folio}{folio_qualifier}.P{page_qualifier}"
 
         for annotation in list(set(annotations)):
             s = s.replace(f"<{annotation}>", ".")
 
-        current_paragraph += [w for w in s.split(".") if w]
+        paragraph = [w for w in s.split(".") if w]
 
-        if add:
-            if len(current_paragraph) > 0:
-                paragraphs.append(current_paragraph)
-                current_paragraph = []
+        if len(paragraph) > 0:
+            paragraphs_dict[paragraph_id] += paragraph
 
-    return paragraphs
+    paragraphs_dict = collections.OrderedDict(
+        sorted(paragraphs_dict.items(), key=lambda x: x[0])
+    )
+
+    return paragraphs_dict
 
 
-PARAGRAPHS = get_paragraphs()
-WORDS = [word for paragraph in PARAGRAPHS for word in paragraph]
+PARAGRAPHS_DICT = get_paragraphs_dict()
+WORDS = [word for paragraph in PARAGRAPHS_DICT.values() for word in paragraph]
 VOCAB = list(set(WORDS))
